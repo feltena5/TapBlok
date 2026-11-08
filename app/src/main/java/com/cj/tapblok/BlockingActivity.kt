@@ -44,7 +44,13 @@ import com.journeyapps.barcodescanner.ScanOptions
 
 class BlockingActivity : ComponentActivity() {
 
+    companion object {
+        /** Set by WebsiteBlockerService: host of the blocked website. */
+        const val EXTRA_BLOCKED_URL = "BLOCKED_URL"
+    }
+
     private var blockedPackage: String? = null
+    private var blockedUrl: String? = null
     private var awaitingScanResult = false
 
     private val qrScanLauncher = registerForActivityResult(ScanContract()) { result ->
@@ -70,7 +76,10 @@ class BlockingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        blockedPackage = intent.getStringExtra("BLOCKED_APP_PACKAGE_NAME")
+        blockedUrl = intent.getStringExtra(EXTRA_BLOCKED_URL)
+        // A blocked website has no per-app unlock: leave blockedPackage null so NFC/QR
+        // scans here don't unlock the whole browser
+        blockedPackage = if (blockedUrl == null) intent.getStringExtra("BLOCKED_APP_PACKAGE_NAME") else null
         val packageName = blockedPackage ?: "An app"
         val prefs = AppSettings.prefs(this)
         val strictMode = prefs.getBoolean(AppSettings.KEY_STRICT_MODE, false)
@@ -91,7 +100,10 @@ class BlockingActivity : ComponentActivity() {
 
         setContent {
             TapBlokTheme {
-                BlockingScreen(
+                val url = blockedUrl
+                if (url != null) {
+                    WebsiteBlockedScreen(host = url, onGoHomeClick = goHome)
+                } else BlockingScreen(
                     packageName = packageName,
                     strictMode = strictMode,
                     unlockMinutes = unlockMinutes,
@@ -293,6 +305,68 @@ fun BlockingScreen(
                 ) {
                     Text("Take a Break ($breaksRemaining remaining)")
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun WebsiteBlockedScreen(host: String, onGoHomeClick: () -> Unit) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(88.dp)
+                    .background(MaterialTheme.colorScheme.primary, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp),
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            Text(
+                text = "WEBSITE BLOCKED",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                letterSpacing = 2.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = host,
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "This website is blocked while your session is active.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            Button(
+                onClick = onGoHomeClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Go Home")
             }
         }
     }

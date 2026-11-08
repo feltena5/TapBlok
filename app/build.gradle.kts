@@ -20,24 +20,28 @@ android {
         applicationId = "com.cj.tapblok"
         minSdk = 24
         targetSdk = 36
-        versionCode = 8
-        versionName = "1.5.1"
+        versionCode = 9
+        versionName = "1.6.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Release signing is optional so debug builds work without the release keystore
+    val releaseStoreFile = localProps.getProperty("RELEASE_STORE_FILE")
     signingConfigs {
-        create("release") {
-            storeFile = file(localProps.getProperty("RELEASE_STORE_FILE", ""))
-            storePassword = localProps.getProperty("RELEASE_STORE_PASSWORD", "")
-            keyAlias = localProps.getProperty("RELEASE_KEY_ALIAS", "")
-            keyPassword = localProps.getProperty("RELEASE_KEY_PASSWORD", "")
+        if (!releaseStoreFile.isNullOrBlank()) {
+            create("release") {
+                storeFile = file(releaseStoreFile)
+                storePassword = localProps.getProperty("RELEASE_STORE_PASSWORD", "")
+                keyAlias = localProps.getProperty("RELEASE_KEY_ALIAS", "")
+                keyPassword = localProps.getProperty("RELEASE_KEY_PASSWORD", "")
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

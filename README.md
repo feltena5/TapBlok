@@ -46,6 +46,7 @@
 - **📷 QR Code Support** — Generate a QR code in-app and print it. Hide it somewhere that requires real effort to reach. Every install gets its own unique code.
 - **🔐 Strict Mode** — Sessions can only be stopped by scanning with TapBlok open. Scanning on a block screen grants a short timed unlock for that one app instead of ending the session.
 - **🔒 Block Any App** — Choose any launchable app on your device. Critical system apps (dialer, camera, settings, launcher) are permanently excluded so you can't lock yourself out.
+- **🌐 Website Blocking** — During a session, block adult content (built-in list) plus any domains or keywords you add, in Chrome, Firefox, Samsung Internet, Brave, Edge, Opera and DuckDuckGo. Uses an optional Accessibility service that only reads the address bar while a session is running.
 - **☕ Smart Breaks** — Take five-minute breaks without ending the session. Choose how many per session (0–5) in Settings.
 - **🔁 Boot Persistence** — If your device restarts mid-session, TapBlok picks right back up.
 - **🚨 Emergency Override** — Lost your tag? A hold-to-stop last resort. Set the hold anywhere from 30 seconds to 15 minutes, or disable it entirely for strict sessions.

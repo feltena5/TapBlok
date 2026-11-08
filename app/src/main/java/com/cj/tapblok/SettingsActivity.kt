@@ -37,6 +37,7 @@ object AppSettings {
     const val KEY_SCHEDULE_STOP_MINUTES = "schedule_stop_minutes"
     // Bit 0 = Monday … bit 6 = Sunday
     const val KEY_SCHEDULE_DAYS = "schedule_days"
+    const val KEY_ADULT_FILTER_ENABLED = "adult_filter_enabled"
 
     const val DEFAULT_OVERRIDE_SECONDS = 90
     const val DEFAULT_BREAKS_ALLOWED = 3

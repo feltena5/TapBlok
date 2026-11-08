@@ -84,6 +84,11 @@
             android:permission="com.cj.tapblok.permission.START_MONITORING"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
+            android:name=".BlockedSitesActivity"
+            android:exported="false"
+            android:label="@string/title_activity_blocked_sites"
+            android:theme="@style/Theme.TapBlok" />
+        <activity
             android:name=".QrCodeActivity"
             android:exported="false"
             android:label="@string/title_activity_qr_code"
@@ -105,6 +110,20 @@
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Monitors app usage to provide blocking functionality." />
+        </service>
+
+        <!-- Reads browser address bars during a session to block websites -->
+        <service
+            android:name=".WebsiteBlockerService"
+            android:exported="false"
+            android:label="@string/website_blocker_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/website_blocker_config" />
         </service>
 
         <receiver
